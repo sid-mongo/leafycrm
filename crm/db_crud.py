@@ -6,16 +6,20 @@ from flask_pymongo import PyMongo
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
+import traceback
+from .db import mongo
+
 
 def get_db():
     """
     Configuration method to return db instance
     """
-    db = getattr(g, "_database", None)
+    #db = getattr(g, "db", None)
+    #print(getattr(g, "_database", None))
 
-    if db is None:
-        db = g._database = PyMongo(current_app).db
-    return db
+    if 'db' not in g:
+        g.db = mongo.db
+    return g.db
 
 # Use LocalProxy to read the global db instance with just `db`
 db = LocalProxy(get_db)
@@ -23,19 +27,23 @@ db = LocalProxy(get_db)
 def list_accounts():
     try:
         start_time = time.perf_counter()
-        accounts = list(db.account.find({}).limit(20))
+        
+        accounts = list(db.account.find({}))
         end_time = time.perf_counter()
         execution_time = (end_time - start_time) * 1000
         query="db.account.find({})"
         return (accounts, execution_time, query)
     except Exception as e:
-        return e
+        traceback.print_exc()
+        #return e
+        return [], 0, str(e)
 
 def get_account_by_id(account_id):
     try:
         query = "db.account.find({'_id': ObjectId("+account_id+")})"
         start_time = time.perf_counter()
         account = list(db.account.find({"_id": ObjectId(account_id)}))
+        #account = list(db.account.find({"accountId": account_id}))
         end_time = time.perf_counter()
         execution_time = (end_time - start_time) * 1000
         return (account, execution_time, str(query))
