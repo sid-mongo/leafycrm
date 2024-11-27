@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, Flask
-from crm.db_crud import list_accounts, get_account_by_id, search_accounts, create_account
+from crm.db_crud import list_accounts, get_account_by_id, create_account, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions
 
 from flask_cors import CORS
 from crm.api.utils import expect
@@ -10,45 +10,89 @@ leafy_api_v1 = Blueprint(
 
 @leafy_api_v1.route('/accounts', methods=['GET'])
 def api_list_accounts():
-    #ACCOUNTS_PER_PAGE = 20
-    accounts = list_accounts()
     
+    (accounts, execution_time, query) = list_accounts()
     response = {
         "accounts": accounts,
-        "page": 0,
-        "filters": {}
+        "execution_time": execution_time,
+        "query": query,
     }
     return jsonify(response)
 
 @leafy_api_v1.route('/accounts/<account_id>', methods=['GET'])
 def api_get_account_by_id(account_id):
-    (account, query) = get_account_by_id(account_id)
+    (account, execution_time, query) = get_account_by_id(account_id)
     
     response = {
         "accounts": account,
-        "page": 0,
-        "query": query
-    }
-    return jsonify(response)
-
-@leafy_api_v1.route('/accounts/search', methods=['GET'])
-def api_search_accounts():
-    name = request.args.get('name')
-    (account, query) = search_accounts(name)
-    
-    response = {
-        "accounts": account,
-        "page": 0,
+        "execution_time": execution_time,
         "query": query
     }
     return jsonify(response)
 
 @leafy_api_v1.route('/accounts', methods=['POST'])
 def api_create_account():
-    (account) = create_account(request.get_json())
+    (res, execution_time, q) = create_account(request.get_json())
     response = {
-        "accounts": account,
-        "page": 0,
-        "query": ""
+        "accounts": res,
+        "execution_time": execution_time,
+        "query": q
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/search', methods=['GET'])
+def api_search_entities():
+    search_term = request.args.get('search_term')
+    search_entity = request.args.get('search_entity')
+    (entity_res, execution_time, query) = search_entities(search_entity, search_term)
+    
+    response = {
+        search_entity: entity_res,
+        "execution_time": execution_time,
+        "query": query
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/opportunities', methods=['GET'])
+def api_list_opportunities():
+    
+    (opportunities, execution_time, query) = list_opportunities()
+    response = {
+        "opportunities": opportunities,
+        "execution_time": execution_time,
+        "query": query,
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/opportunities/<opp_id>', methods=['GET'])
+def api_get_opportunity_by_id(opp_id):
+    (opportunity, execution_time, query) = get_opportunity_by_id(opp_id)
+    
+    response = {
+        "opportunities": opportunity,
+        "execution_time": execution_time,
+        "query": query
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/campaigns', methods=['GET'])
+def api_list_campaigns():
+    
+    (campaigns, execution_time, query) = list_campaigns()
+    response = {
+        "campaigns": campaigns,
+        "execution_time": execution_time,
+        "query": query,
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/interactions', methods=['GET'])
+def api_list_interactions():
+    
+    (interactions, execution_time, query) = list_interactions()
+    response = {
+        "interactions": interactions,
+        "execution_time": execution_time,
+        "query": query,
     }
     return jsonify(response)
