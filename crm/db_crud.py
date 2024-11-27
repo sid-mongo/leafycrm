@@ -42,13 +42,29 @@ def get_account_by_id(account_id):
     except Exception as e:
         return e
 
-def create_account(account_details):
+def create_account(account_details, include_opp_flag):
     try:
-        start_time = time.perf_counter()
-        res = db.accounts.insert_one(account_details)
-        end_time = time.perf_counter()
-        execution_time = (end_time - start_time) * 1000
-        return(res.acknowledged, execution_time, "query")
+        if 'opportunity' not in account_details:
+            start_time = time.perf_counter()
+            res = db.account.insert_one(account_details)
+            end_time = time.perf_counter()
+            execution_time = (end_time - start_time) * 1000
+            query = 'db.account.insert_one('+(str(account_details).replace('\n', ' '))+')'
+            return(res.acknowledged, execution_time, query)
+        else:
+            op = account_details['opportunity']
+            del account_details['opportunity']
+            start_time = time.perf_counter()
+            res = db.account.insert_one(account_details)
+            opp_res = db.opportunity.insert_one(op)
+            end_time = time.perf_counter()
+            execution_time = (end_time - start_time) * 1000
+            query = """START TRANSACTION
+            db.acc.insert_one(account_details) 
+            db.ops.insert_one(op) 
+            END TRANSACTION"""
+
+            return(res.acknowledged, execution_time, query)
     except Exception as e:
         return e
 
@@ -139,5 +155,16 @@ def list_interactions():
         execution_time = (end_time - start_time) * 1000
         query="db.account.aggregate("+(str(pipeline).replace('\n', ' '))+")"
         return (interactions, execution_time, query)
+    except Exception as e:
+        return e
+
+def create_campaign(campaign_details):
+    try:
+        start_time = time.perf_counter()
+        res = db.campaign.insert_one(campaign_details)
+        end_time = time.perf_counter()
+        execution_time = (end_time - start_time) * 1000
+        query = 'db.campaign.insert_one('+(str(campaign_details).replace('\n', ' '))+')'
+        return(res.acknowledged, execution_time, query)
     except Exception as e:
         return e
