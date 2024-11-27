@@ -1,4 +1,4 @@
-Flask
+Flask==2.2.5
 pymongo[srv]
 Flask-PyMongo
 flask-cors

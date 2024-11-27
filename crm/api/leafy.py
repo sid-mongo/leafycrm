@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify, Flask
-from crm.db_crud import list_accounts, get_account_by_id, create_account, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions
+from flask import Blueprint, request, jsonify, Flask, current_app, g
+from crm.db_crud import list_accounts, get_account_by_id, create_account, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions, create_campaign
 
 from flask_cors import CORS
 from crm.api.utils import expect
@@ -32,7 +32,8 @@ def api_get_account_by_id(account_id):
 
 @leafy_api_v1.route('/accounts', methods=['POST'])
 def api_create_account():
-    (res, execution_time, q) = create_account(request.get_json())
+    include_opp_flag = request.args.get('includesOpp')
+    (res, execution_time, q) = create_account(request.get_json(), include_opp_flag)
     response = {
         "accounts": res,
         "execution_time": execution_time,
@@ -94,5 +95,16 @@ def api_list_interactions():
         "interactions": interactions,
         "execution_time": execution_time,
         "query": query,
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/campaigns', methods=['POST'])
+def api_create_campaign():
+    
+    (res, execution_time, q) = create_campaign(request.get_json())
+    response = {
+        "campaign": res,
+        "execution_time": execution_time,
+        "query": q
     }
     return jsonify(response)
