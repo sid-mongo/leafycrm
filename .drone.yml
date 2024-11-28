@@ -33,7 +33,7 @@ steps:
     add_repos: [mongodb=https://10gen.github.io/helm-charts]
     namespace: sa-demo
     release: leafycrm-backend-sa-ncr
-    values: image.tag=git-${DRONE_COMMIT_SHA:0:7},image.repository=795250896452.dkr.ecr.us-east-1.amazonaws.com/sa-demo/${DRONE_REPO_NAME},ingress.enabled=true,ingress.hosts[0]=leafycrm-backend-sa-ncr.sa-demo.staging.corp.mongodb.com,mesh.enabled=true
+    values: image.tag=git-${DRONE_COMMIT_SHA:0:7},image.repository=795250896452.dkr.ecr.us-east-1.amazonaws.com/sa-demo/${DRONE_REPO_NAME},ingress.enabled=true,ingress.hosts[0]=leafycrm-backend-sa-ncr.sa-demo.staging.corp.mongodb.com,mesh.enabled=true,resources.requests.memory=1024Mi,resources.limits.memory=1Gi,resources.requests.cpu=500m,resources.limits.cpu=1000m
     api_server: https://api.staging.corp.mongodb.com
     kubernetes_token:
       from_secret: staging_kubernetes_token
