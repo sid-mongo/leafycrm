@@ -8,7 +8,7 @@ from datetime import datetime
 leafy_api_v1 = Blueprint(
     'leafy_api_v1', 'leafy_api_v1', url_prefix='/api/v1/leafycrm')
 
-CORS(leafy_api_v1)
+CORS(leafy_api_v1, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 @leafy_api_v1.route('/accounts', methods=['GET'])
 def api_list_accounts():
