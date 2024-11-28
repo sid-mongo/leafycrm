@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, Flask, current_app, g
-from crm.db_crud import list_accounts, get_account_by_id, create_account, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions, create_campaign
+from crm.db_crud import list_accounts, get_account_by_id, create_account, customer_sentiment, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions, create_campaign, campaign_analysis
 
 from flask_cors import CORS
 from crm.api.utils import expect
@@ -104,6 +104,28 @@ def api_list_interactions():
 def api_create_campaign():
     
     (res, execution_time, q) = create_campaign(request.get_json())
+    response = {
+        "campaign": res,
+        "execution_time": execution_time,
+        "query": q
+    }
+    return jsonify(response)
+
+@leafy_api_v1.route('/campaign_analysis', methods=['GET'])
+def api_campaign_analysis():
+    
+    (res, execution_time, q) = campaign_analysis()
+    response = {
+        "campaign": res,
+        "execution_time": execution_time,
+        "query": q
+    }
+    return jsonify(res)
+
+@leafy_api_v1.route('/customer_sentiment', methods=['GET'])
+def api_customer_sentiment():
+    
+    (res, execution_time, q) = customer_sentiment()
     response = {
         "campaign": res,
         "execution_time": execution_time,
