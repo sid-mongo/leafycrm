@@ -171,8 +171,13 @@ def create_campaign(campaign_details):
         start_time = time.perf_counter()
         res = db.campaign.insert_one(campaign_details)
         end_time = time.perf_counter()
+        new_interaction = {"campaignId": campaign_details['campaignId'], "interactionType": "email"}
+        q = {'accountId': {'$gte': 2900}}
+        u = { "$push": { "contacts.0.campaignInteractions": new_interaction}}
+        update_res = db.account.update_many(q, u)
         execution_time = (end_time - start_time) * 1000
         query = 'db.campaign.insert_one('+(str(campaign_details).replace('\n', ' '))+')'
         return(res.acknowledged, execution_time, query)
     except Exception as e:
-        return e
+        return [], 0, str(e)
+
