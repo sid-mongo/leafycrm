@@ -197,6 +197,7 @@ def campaign_analysis():
 def customer_sentiment():
     try:
         start_time = time.perf_counter()
+        time.sleep(5)
         res = db.tickets.find_one({'customerID': 12345}, {'_id': 0, 'sentiment': 1})
         end_time = time.perf_counter()
         execution_time = (end_time - start_time) * 1000
