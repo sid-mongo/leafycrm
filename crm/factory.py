@@ -38,7 +38,7 @@ def create_app():
     app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
     
     # Enable CORS
-    CORS(app)
+    CORS(app, origins="https://leafycrm-frontend-sa-ncr.sa-demo.staging.corp.mongodb.com/")
 
     # Set custom JSON encoder for the app
     app.json_encoder = MongoJsonEncoder
