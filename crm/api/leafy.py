@@ -1,24 +1,27 @@
-from flask import Blueprint, request, jsonify, Flask, current_app, g
+from flask import Blueprint, request, jsonify, Flask, current_app, g, Response
 from crm.db_crud import list_accounts, get_account_by_id, create_account, customer_sentiment, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions, create_campaign, campaign_analysis
 
 from flask_cors import CORS, cross_origin
 from crm.api.utils import expect
 from datetime import datetime
+import json
 
 leafy_api_v1 = Blueprint(
     'leafy_api_v1', 'leafy_api_v1', url_prefix='/api/v1/leafycrm')
 
 @leafy_api_v1.route('/accounts', methods=['GET'])
-@cross_origin(origins="https://leafycrm-frontend-sa-ncr.sa-demo.staging.corp.mongodb.com/", supports_credentials=True, methods=["GET"])
+@cross_origin(origins="https://leafycrm-frontend-sa-ncr.sa-demo.staging.corp.mongodb.com/", supports_credentials=True, methods=['GET', 'POST'])
 def api_list_accounts():
     
     (accounts, execution_time, query) = list_accounts()
-    response = {
+    resp = {
         "accounts": accounts,
         "execution_time": execution_time,
         "query": query,
     }
-    return jsonify(response)
+    response = jsonify(resp)
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE'
+    return response
 
 @leafy_api_v1.route('/accounts/<account_id>', methods=['GET'])
 def api_get_account_by_id(account_id):
