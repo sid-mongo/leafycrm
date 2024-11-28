@@ -87,12 +87,12 @@ def search_entities(entity_name, search_string):
                                 'path': {'wildcard': '*'}
                             }
                             }
-                        },
-                        {
-                            '$project': {
-                            '_id': 0
-                            }
                         }
+                        # {
+                        #     '$project': {
+                        #     '_id': 0
+                        #     }
+                        # }
                     ]
         coll = db[entity_name]
         start_time = time.perf_counter()
