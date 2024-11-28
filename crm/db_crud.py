@@ -57,7 +57,8 @@ def create_account(account_details, include_opp_flag):
             res = db.account.insert_one(account_details)
             end_time = time.perf_counter()
             execution_time = (end_time - start_time) * 1000
-            query = 'db.account.insert_one('+(str(account_details).replace('\n', ' '))+')'
+            #query = 'db.account.insert_one('+(str(account_details).replace('\n', ' '))+')'
+            query='db.account.insert_one(account_details))'
             return(res.acknowledged, execution_time, query)
         else:
             op = account_details['opportunity']
@@ -84,7 +85,8 @@ def search_entities(entity_name, search_string):
                             'index': "default",
                             'text': {
                                 'query': search_string,
-                                'path': {'wildcard': '*'}
+                                'path': {'wildcard': '*'},
+                                'fuzzy': {}
                             }
                             }
                         }
@@ -180,4 +182,28 @@ def create_campaign(campaign_details):
         return(res.acknowledged, execution_time, query)
     except Exception as e:
         return [], 0, str(e)
+
+def campaign_analysis():
+    try:
+        start_time = time.perf_counter()
+        res = (db.campaign_analysis.find_one({}, {'_id': 0}))
+        end_time = time.perf_counter()
+        execution_time = (end_time - start_time) * 1000
+        query = 'db.account.aggregate(analytics_pipeline)'
+        return(res, execution_time, query)
+    except Exception as e:
+        return [], 0, str(e)
+
+def customer_sentiment():
+    try:
+        start_time = time.perf_counter()
+        res = db.tickets.find_one({'customerID': 12345}, {'_id': 0, 'sentiment': 1})
+        end_time = time.perf_counter()
+        execution_time = (end_time - start_time) * 1000
+        query = "db.tickets.find_one({'customerID': 12345}, {'_id': 0, 'sentiment': 1})"
+        return(res, execution_time, query)
+
+    except Exception as e:
+        return [], 0, str(e)
+
 
