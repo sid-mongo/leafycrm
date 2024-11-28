@@ -11,7 +11,7 @@ leafy_api_v1 = Blueprint(
 CORS(leafy_api_v1, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 @leafy_api_v1.route('/accounts', methods=['GET'])
-@cross_origin()
+@cross_origin(origins="https://leafycrm-frontend-sa-ncr.sa-demo.staging.corp.mongodb.com/", supports_credentials=True, methods=["GET"])
 def api_list_accounts():
     
     (accounts, execution_time, query) = list_accounts()
