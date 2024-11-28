@@ -28,7 +28,7 @@ def list_accounts():
     try:
         start_time = time.perf_counter()
         
-        accounts = list(db.account.find({}))
+        accounts = list(db.account.find({}).limit(20))
         end_time = time.perf_counter()
         execution_time = (end_time - start_time) * 1000
         query="db.account.find({})"
