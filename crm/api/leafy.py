@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, Flask, current_app, g
 from crm.db_crud import list_accounts, get_account_by_id, create_account, customer_sentiment, search_entities, list_opportunities, get_opportunity_by_id, list_campaigns, list_interactions, create_campaign, campaign_analysis
 
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from crm.api.utils import expect
 from datetime import datetime
 
